@@ -1,9 +1,12 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { icons } from "@/constants";
 import { Video } from "@/lib/firebase";
+import { Video as VideoAv, ResizeMode } from "expo-av";
 
 const VideoCard = ({ video }: { video: Video }) => {
+  const [play, setPlay] = useState(false);
+
   let imgUrl = `https://ui-avatars.com/api/?name=${video.displayName}&format=png&color=161622&background=CDCDE0&bold=true`;
   return (
     <View className="flex flex-col items-center px-6 my-4">
@@ -41,24 +44,40 @@ const VideoCard = ({ video }: { video: Video }) => {
           />
         </View>
       </View>
-      <TouchableOpacity
-        className="flex w-full justify-center items-center h-[300px] mt-3"
-        activeOpacity={0.7}
-      >
-        <Image
-          source={{ uri: video.thumbnail }}
-          className="w-full h-full rounded-lg"
-          resizeMode="cover"
-          onError={(error) =>
-            console.log("Image loading error:", error.nativeEvent.error)
-          }
+      {play ? (
+        <VideoAv
+          source={{ uri: video.video }}
+          className="w-full h-[300px] rounded-lg"
+          resizeMode={ResizeMode.CONTAIN}
+          shouldPlay
+          useNativeControls
+          onPlaybackStatusUpdate={(status) => {
+            if ("didJustFinish" in status && status.didJustFinish) {
+              setPlay(false);
+            }
+          }}
         />
-        <Image
-          source={icons.play}
-          className="w-10 h-10 absolute"
-          resizeMode="contain"
-        />
-      </TouchableOpacity>
+      ) : (
+        <TouchableOpacity
+          className="flex w-full justify-center items-center h-[300px] mt-3"
+          activeOpacity={0.7}
+          onPress={() => setPlay(true)}
+        >
+          <Image
+            source={{ uri: video.thumbnail }}
+            className="w-full h-full rounded-lg"
+            resizeMode="cover"
+            onError={(error) =>
+              console.log("Image loading error:", error.nativeEvent.error)
+            }
+          />
+          <Image
+            source={icons.play}
+            className="w-10 h-10 absolute"
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
