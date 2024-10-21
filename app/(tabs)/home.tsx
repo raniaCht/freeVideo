@@ -62,17 +62,13 @@ const Home = () => {
                 />
               </View>
             </View>
-            <SearchInput
-              handleChangeText={() => {}}
-              placeholder="Search for a video topic"
-              value=""
-            />
+            <SearchInput />
 
             <View className="mt-6 w-full">
               <Text className="font-plight text-sm text-gray-100">
                 Trending Videos
               </Text>
-              <Trending posts={[{ id: 1 }, { id: 2 }, { id: 3 }]} />
+              <Trending posts={data!} />
             </View>
           </View>
         )}
