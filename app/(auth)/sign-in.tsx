@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "@/constants";
 import FormField from "@/components/FormField";
 import CustomButton from "@/components/CustomButton";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH } from "@/firebaseConfig";
 
@@ -15,7 +15,9 @@ const SignIn = () => {
   async function signInWithEmail() {
     setIsSubmitting(true);
     try {
-      await signInWithEmailAndPassword(auth, form.email, form.password);
+      signInWithEmailAndPassword(auth, form.email, form.password).then(() => {
+        router.push("/home");
+      });
     } catch (error) {
       console.log(error);
     } finally {
