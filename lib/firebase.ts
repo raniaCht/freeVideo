@@ -6,9 +6,21 @@ import {
   setDoc,
   query,
   where,
+  addDoc,
 } from "firebase/firestore";
 import { FIREBASE_AUTH, FIREBASE_DB } from "@/firebaseConfig";
 import { updateProfile } from "firebase/auth";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytes,
+  uploadBytesResumable,
+} from "firebase/storage";
+
+import { DocumentPickerAsset } from "expo-document-picker";
+import "react-native-get-random-values";
+import { v4 as uuidv4 } from "uuid";
 
 export type Video = {
   id: string;
@@ -173,3 +185,58 @@ export async function getVideosByUser(
     throw error;
   }
 }
+
+export const uploadToFirebase = async (uri: string, type: string) => {
+  const fetchResponse = await fetch(uri);
+  const theBlob = await fetchResponse.blob();
+  const name = uuidv4();
+  const folder = type === "image" ? "images/" : "videos/";
+  const imageRef = ref(getStorage(), `${folder}${name}`);
+
+  const uploadTask = uploadBytesResumable(imageRef, theBlob);
+
+  return new Promise((resolve, reject) => {
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log(`Upload is ${progress}% done`);
+      },
+      (error) => {
+        console.log(error);
+        reject(error);
+      },
+      async () => {
+        const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+        resolve({
+          downloadUrl,
+          metadata: uploadTask.snapshot.metadata,
+        });
+      }
+    );
+  });
+};
+
+export const createPost = async (video: Video) => {
+  try {
+    const auth = FIREBASE_AUTH;
+    // Reference to the 'videos' collection
+    const videosRef = collection(FIREBASE_DB, "document");
+
+    // Add a new document with the video details
+    const docRef = await addDoc(videosRef, {
+      title: video.title,
+      prompt: video.prompt,
+      video: video.video,
+      thumbnail: video.thumbnail,
+      creator: auth.currentUser?.uid,
+    });
+
+    console.log("Video document written with ID: ", docRef.id);
+    return docRef.id;
+  } catch (error) {
+    console.error("Error adding video document: ", error);
+    throw error;
+  }
+};

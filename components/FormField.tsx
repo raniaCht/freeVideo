@@ -27,7 +27,7 @@ const FormField = ({
       <Text className="text-gray-100 font-pregular text-base">{title}</Text>
       <View className="bg-black-100 px-2 border border-black-200 focus:border-secondary-100 rounded-lg flex-row justify-center items-center">
         <TextInput
-          className="flex-1 py-4 text-white text-base font-psemibold"
+          className="flex-1 py-4 text-white text-base font-pregular"
           secureTextEntry={title === "Password" && !showPassword}
           onChangeText={handleChangeText}
           value={value}
