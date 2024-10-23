@@ -221,10 +221,8 @@ export const uploadToFirebase = async (uri: string, type: string) => {
 export const createPost = async (video: Video) => {
   try {
     const auth = FIREBASE_AUTH;
-    // Reference to the 'videos' collection
     const videosRef = collection(FIREBASE_DB, "document");
 
-    // Add a new document with the video details
     const docRef = await addDoc(videosRef, {
       title: video.title,
       prompt: video.prompt,
@@ -237,6 +235,45 @@ export const createPost = async (video: Video) => {
     return docRef.id;
   } catch (error) {
     console.error("Error adding video document: ", error);
+    throw error;
+  }
+};
+
+export const getSavedVideos = async () => {
+  try {
+    const auth = FIREBASE_AUTH;
+    const userUid = auth.currentUser?.uid;
+
+    if (!userUid) {
+      throw new Error("User is not authenticated");
+    }
+
+    const bookmarksRef = collection(FIREBASE_DB, "bookmark");
+
+    const q = query(bookmarksRef, where("owner", "==", userUid));
+
+    const querySnapshot = await getDocs(q);
+
+    const savedVideos: Video[] = [];
+
+    for (const bookmarkDoc of querySnapshot.docs) {
+      const bookmarkData = bookmarkDoc.data();
+      const videoRef = bookmarkData.video;
+
+      if (videoRef) {
+        const videoDoc = await getDoc(videoRef);
+
+        if (videoDoc.exists()) {
+          const videoData = videoDoc.data() as Video;
+
+          savedVideos.push(videoData);
+        }
+      }
+    }
+
+    return savedVideos;
+  } catch (error) {
+    console.error("Error fetching saved videos: ", error);
     throw error;
   }
 };
