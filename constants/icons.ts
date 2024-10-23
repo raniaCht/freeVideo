@@ -11,6 +11,7 @@ import leftArrow from "../assets/icons/left-arrow.png";
 import rightArrow from "../assets/icons/right-arrow.png";
 import search from "../assets/icons/search.png";
 import upload from "../assets/icons/upload.png";
+import save from "../assets/icons/save.png";
 
 export default {
   bookmark,
@@ -26,4 +27,5 @@ export default {
   rightArrow,
   search,
   upload,
+  save,
 };

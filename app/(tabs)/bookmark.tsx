@@ -36,8 +36,8 @@ const Bookmark = () => {
         }}
         ListHeaderComponent={() => (
           <View className="mx-6 mt-5">
-            <View className="flex-row justify-between items-center mb-6">
-              <Text className="text-gray-100 font-pregular text-sm">
+            <View className="flex-col justify-between items-start mb-6">
+              <Text className="text-white font-pmedium text-xl mb-2">
                 Saved Videos
               </Text>
               <SearchInput />

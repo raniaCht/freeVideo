@@ -1,8 +1,9 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text, Image, TouchableOpacity, Modal } from "react-native";
 import React, { useState } from "react";
 import { icons } from "@/constants";
 import { Video } from "@/lib/firebase";
 import { Video as VideoAv, ResizeMode } from "expo-av";
+import Menu from "./Menu";
 
 const VideoCard = ({ video }: { video: Video }) => {
   const [play, setPlay] = useState(false);
@@ -36,13 +37,7 @@ const VideoCard = ({ video }: { video: Video }) => {
             </Text>
           </View>
         </View>
-        <View className="self-start">
-          <Image
-            source={icons.menu}
-            className="w-[21px] h-[23px] "
-            resizeMode="contain"
-          />
-        </View>
+        <Menu videoID={video.id} />
       </View>
       {play ? (
         <VideoAv

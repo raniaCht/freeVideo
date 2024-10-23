@@ -277,3 +277,26 @@ export const getSavedVideos = async () => {
     throw error;
   }
 };
+
+export const addBookmark = async (videoID: string) => {
+  try {
+    const user = FIREBASE_AUTH.currentUser;
+    if (!user) {
+      throw new Error("No user is signed in");
+    }
+
+    const bookmarksRef = collection(FIREBASE_DB, "bookmarks");
+    const videoRef = doc(FIREBASE_DB, "document", videoID);
+
+    await addDoc(bookmarksRef, {
+      owner: user.uid,
+      video: videoRef,
+    });
+
+    console.log("Bookmark added successfully");
+
+    return { message: "Bookmark added successfully" };
+  } catch (error) {
+    console.error("Error adding bookmark: ", error);
+  }
+};
