@@ -285,7 +285,7 @@ export const addBookmark = async (videoID: string) => {
       throw new Error("No user is signed in");
     }
 
-    const bookmarksRef = collection(FIREBASE_DB, "bookmarks");
+    const bookmarksRef = collection(FIREBASE_DB, "bookmark");
     const videoRef = doc(FIREBASE_DB, "document", videoID);
 
     await addDoc(bookmarksRef, {

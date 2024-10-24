@@ -7,10 +7,12 @@ import Trending from "@/components/Trending";
 import EmptyState from "@/components/EmptyState";
 import { getVideos, Video } from "@/lib/firebase";
 import VideoCard from "@/components/VideoCard";
+import { FIREBASE_AUTH } from "@/firebaseConfig";
 
 const Home = () => {
   const [data, setData] = useState<Array<Video> | undefined>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [displayName, setDisplayName] = useState("");
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -27,6 +29,7 @@ const Home = () => {
   };
 
   useEffect(() => {
+    setDisplayName(FIREBASE_AUTH.currentUser?.displayName!);
     fetchData();
   }, []);
 
@@ -51,7 +54,7 @@ const Home = () => {
                   Welcome Back
                 </Text>
                 <Text className="text-white font-pmedium text-2xl">
-                  Rania Cht
+                  {displayName}
                 </Text>
               </View>
               <View>

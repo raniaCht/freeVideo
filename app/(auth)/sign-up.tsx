@@ -2,7 +2,7 @@ import { View, Text, ScrollView, Image } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FormField from "@/components/FormField";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import CustomButton from "@/components/CustomButton";
 import { images } from "@/constants";
 import { FIREBASE_AUTH, FIREBASE_DB } from "@/firebaseConfig";
@@ -28,17 +28,17 @@ const SignUp = () => {
       );
       const user = userCredential.user;
 
-      // Update the display name in Firebase Authentication
       await updateProfile(user, {
         displayName: form.name,
       });
 
-      // // Store user data in Cloud Firestore
       setDoc(doc(db, "users", user.uid), {
-        name: form.name,
+        displayName: form.name,
       }).catch((error) => console.log);
 
-      signInWithEmailAndPassword(auth, form.email, form.password);
+      signInWithEmailAndPassword(auth, form.email, form.password).then(() => {
+        router.push("/(tabs)/home");
+      });
     } catch (error) {
       console.log(error);
     } finally {
@@ -86,6 +86,7 @@ const SignUp = () => {
             containerStyle="w-full mt-7"
             handlePress={signUpWithEmail}
             textStyle=""
+            isLoaded={isLoading}
           />
           <Text className="text-white text-center font-plight mt-4">
             Already have an account?{" "}
